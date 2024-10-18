@@ -1,0 +1,184 @@
+import discord
+from discord.ext import commands
+import requests
+import random
+
+intents = discord.Intents.default()
+
+intents.message_content =True
+
+bot=commands.Bot(command_prefix = "/", intents=intents)
+
+UNSPLASH_ACCESS_KEY = 'tNa1o0OAlRI5iP21YbAdqLEap7we2ZyF4gSRXjDhCs8'#AQUI DBE IR LA CLAVE DE ACCESO A LA API DE UNPLASH
+
+@bot.event
+async def on_reday():
+    print(f"Has activado a {bot.user}")
+
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+
+def get_contamination_image():
+    query = "contaminacion"
+    url = f"https://api.unsplash.com/photos/random?query={query}&client_id={UNSPLASH_ACCESS_KEY}" #Crea la URL de la API de Unsplash, utilizando una f-string para incluir la variable query y la clave de acceso UNSPLASH_ACCESS_KEY. La URL solicita una imagen aleatoria relacionada con la contaminación desde Unsplash.
+    response = requests.get(url) #Realiza una solicitud HTTP GET a la URL definida. Se utiliza la biblioteca requests para obtener datos desde la API de Unsplash.
+    data = response.json()
+    return data['urls']
+
+
+#PATO
+@bot.command()
+async def pato(ctx):
+    '''Una vez que llamamos al comando duck, 
+    el programa llama a la función get_duck_image_url'''
+    image_url = get_duck_image_url
+    await ctx.send('Esto no tiene nada que ver con la contaminacion pero bueno aqui esta tu pato 🦆:')
+    await ctx.send(get_duck_image_url)
+
+#SALUDO
+@bot.command()
+async def hola(ctx):
+    await ctx.send(f'Hola soy {bot.user}, y estoy aqui para darte consejos,ayudarte,dar retos e informarte de como ayudar al medio ambiiente, CREADOR: Diego Zabala')
+    await ctx.send('Aqui los comandos: /reto, /consejo, /descompsicion + el objeto deseado, /reciclaje + el objeto deseado, /meme, /image, /cuidar, /emoji, /info, 👈(ﾟヮﾟ👈) ')
+
+#INFO
+@bot.command()
+async def info(ctx):
+    await ctx.send('El sufrimiento de nuestro planeta es un problema complejo que requiere la acción colectiva de individuos, comunidades, gobiernos y organizaciones. Cada pequeño esfuerzo cuenta, y al adoptar hábitos más sostenibles, podemos contribuir a un futuro más saludable y equilibrado para la Tierra. La educación, la concienciación y la acción son claves para lograr un cambio positivo. ¡Juntos podemos marcar la diferencia! 🌍')
+    await ctx.send('Aqui info de lo que sufre el planeta cada año y como puedes ayudarlo(❁´◡`❁)')
+
+#CUIDADO DEL PLANETA
+@bot.command()
+async def cuidar(ctx):
+    await ctx.send('Puedes cuidar el medio ambiente reduciendo, reutilizando y reciclando, ahorrando energía y agua, usando transporte sostenible, reduciendo el consumo de carne, plantando árboles y evitando el plástico de un solo uso. Comparte estos hábitos y apoya energías renovables. 🌍')
+    await ctx.send('🌱🪴☘️🌲🌳🌴🌵🌾🌿🍀🍁🍂🍃🌹🌼🌷🌻🪻')
+
+#DESCOMPOSICION    
+descomposicion_materiales = {
+    "botella":500,
+    "lata":50,
+    "bolsa":150,
+    "vidrio":4000
+}
+
+
+@bot.command()
+async def descomposicion(ctx, objeto: str):
+    objeto = objeto.lower()
+
+    if objeto in descomposicion_materiales:
+        tiempo = descomposicion_materiales[objeto]
+        
+        await ctx.send(f"El objeto {objeto},dura aprox {tiempo} en descomponerse🕐")
+        if tiempo >= 100:
+            await ctx.send(f"Ayuda el planeta se muere(˘･_･˘)")
+    else: 
+        await ctx.send("Este objeto no esta aqui,lo lamentoヾ(⌐■_■)ノ♪")
+
+#RECICLAJE
+reciclaje_ideas = {
+    "plastico": ["macetas para plantas", "joyería artesanal", "ladrillos ecológicos"],
+    "papel": ["cuadernos reciclados", "decoraciones para el hogar", "papel maché"],
+    "vidrio": ["lámparas decorativas", "jarrones", "ladrillos de vidrio"],
+    "metal": ["macetas", "arte decorativo", "portavelas"],
+    "carton": ["organizadores de escritorio", "casitas para mascotas", "manualidades infantiles"],
+}
+
+
+@bot.command()
+async def reciclaje(ctx, elemento: str):
+
+    elemento = elemento.lower()  # Convertir a minúsculas para evitar errores de entrada
+    
+    if elemento in reciclaje_ideas:
+        objetos = reciclaje_ideas[elemento]
+        await ctx.send(f"Con {elemento} puedes hacer: {objetos}.")
+    else:
+        await ctx.send("Lo siento, no tengo esa fundacion aqui")
+
+#MEMES
+meme_ambiental = [
+    'https://th.bing.com/th/id/R.a6199ce1c035cdec0f918090dc32aed3?rik=ukq1zMgeITh2zQ&pid=ImgRaw&r=0&sres=1&sresct=1',
+    'https://i.ytimg.com/vi/cbivSo19IkU/hqdefault.jpg',
+    'https://th.bing.com/th/id/OIP.Dx5b8SdLI8hMVDOayUuVcwAAAA?rs=1&pid=ImgDetMain',
+    'https://th.bing.com/th/id/OIP.NCVDvSnqUS12iLVvbIJiSAAAAA?rs=1&pid=ImgDetMain',
+    'https://th.bing.com/th/id/OIP.IYSVVKDPN5vewGnE25q6ZwHaHi?rs=1&pid=ImgDetMain'
+]
+
+
+@bot.command()
+async def meme(ctx):
+
+    meme_random = random.choice(meme_ambiental)
+    await ctx.send("Aqui esta tu meme ambiental:")
+    await ctx.send(meme_random)
+
+#EMOJIS
+emojis = ['🌍', '🌱', '🌧️', '💧', '♻️', '🚮', '☀️', '🌳', '🌐', '🌪️']
+
+@bot.command()
+async def emoji(ctx):
+
+    emoji_random = random.choice(emojis)
+    await ctx.send("Aqui un emoji ambiental ( ﾉ ﾟｰﾟ)ﾉ:")
+    await ctx.send(emoji_random)
+
+
+#RETOS
+retos_semanales = [
+    'Semana sin plástico:Evita cualquier tipo de plástico de un solo uso (bolsas, botellas, utensilios, etc.) ♻️.',
+    'Semana del transporte sostenible:Desplázate únicamente a pie, en bicicleta o usando transporte público 🚲.',
+    'Semana vegetariana:Elimina la carne de tu dieta durante toda la semana y opta por comidas basadas en plantas 🌱.',
+    'Semana de ahorro de energía:Apaga luces y dispositivos cuando no los uses. Desenchufa aparatos innecesarios 💡.',
+    'Semana sin compras innecesarias:Compra solo lo esencial y evita productos con exceso de embalaje 🛒.',
+    'Semana del ahorro de agua:Reduce el tiempo en la ducha, cierra el grifo mientras te cepillas y repara fugas 🚿.',
+    'Semana de residuos cero:Intenta generar la menor cantidad de residuos posibles; usa alternativas reutilizables 🗑️.',
+    'Semana de plantación:Planta un árbol, cuida una planta o involúcrate en actividades de jardinería 🌳.',
+    'Semana de compras locales:Compra productos locales y de temporada para reducir la huella de carbono 🛍️.',
+    'Semana de conciencia ambiental:Educa a tus amigos y familiares sobre hábitos sostenibles y comparte consejos ecológicos 📢.'
+]
+
+@bot.command()
+async def reto(ctx):
+
+    reto_random = random.choice(retos_semanales)
+    await ctx.send("Aqui tu reto para esta semana, suerte☘️:")
+    await ctx.send(reto_random)
+
+#CONSEJOS
+consejos_ambientales = [
+    'Apaga dispositivos en espera: Desenchúfalos para evitar el consumo fantasma. 🔌',
+    'Bombillas LED: Usa luces más eficientes y duraderas. 💡',
+    'Aprovecha la luz natural: Abre las cortinas y ahorra energía. 🌞',
+    'Electrodomésticos eficientes: Compra productos con etiquetas de bajo consumo. 🌱',
+    'Mantén tu coche: Un vehículo eficiente consume menos. 🚗',
+    'Instala cabezales de bajo flujo: Reducen el consumo sin perder presión. 💧',
+    'Reutiliza agua: El agua de lavar verduras sirve para regar. 🌿',
+    'Haz compost: Convierte restos de comida en abono. 🍂',
+    'Evita plásticos de un solo uso: Lleva tu propia bolsa y botella. 🛍️',
+    'Limpiezas comunitarias: Participa en jornadas para limpiar tu área. 🗑️'
+]
+
+@bot.command()
+async def consejo(ctx):
+
+    consejo_random = random.choice(consejos_ambientales)
+    await ctx.send("Aqui un consejito:")
+    await ctx.send(consejo_random)
+
+#IMAGEN API
+@bot.command()
+async def image(ctx):
+
+    image_url = get_contamination_image()
+    if image_url:
+        await ctx.send(f"Aquí tienes una imagen sobre contaminación con sus respectivos links: {image_url}")
+    else:
+        await ctx.send('No se pudo encontrar la imagen,intentalo mas tarde 🕐')
+        
+bot.run("")#Es criba aqui su token
